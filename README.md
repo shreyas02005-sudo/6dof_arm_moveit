@@ -10,8 +10,8 @@ MoveIt 2 and controlled through a C++ commander node. It runs on mock hardware
 ![Commander API](docs/rviz-2.jpg)
 
 Demo videos (Google Drive folder, two clips):
-- MoveIt planning in RViz
-- Commander API via `ros2 topic pub`
+- MoveIt in RViz: poses set by hand in the MotionPlanning panel, then Plan & Execute
+- Commander API: pose and gripper commands sent with `ros2 topic pub`
 
 [Watch the demo videos](https://drive.google.com/drive/folders/1jh_nVYlnCgurntZmtTK8vnjJQu4upVwr?usp=sharing)
 
@@ -30,16 +30,45 @@ source install/setup.bash
 ```
 
 ## Run
-Terminal 1:
+
+### 1. MoveIt in RViz (manual planning)
 ```bash
 ros2 launch my_robot_moveit_config demo.launch.py
 ```
+In RViz, set a goal pose in the MotionPlanning panel and click Plan & Execute.
 
-Terminal 2 (source the workspace first):
+### 2. RViz + commander API
+Run each in its own terminal, and source the workspace in each one.
+
+Terminal 1:
 ```bash
-source install/setup.bash
+ros2 launch my_robot_bringup my_robot.launch.xml
+```
+
+Terminal 2:
+```bash
 ros2 run my_robot_commander_cpp commander
 ```
+
+Terminal 3 (send commands):
+```bash
+# Move to a pose (planned move)
+ros2 topic pub -1 /pose_command my_robot_interfaces/msg/PoseCommand "{x: 0.7, y: 0.0, z: 0.4, roll: 3.14, pitch: 0.0, yaw: 0.0, cartesian_path: false}"
+
+# Move down in a straight line
+ros2 topic pub -1 /pose_command my_robot_interfaces/msg/PoseCommand "{x: 0.7, y: 0.0, z: 0.2, roll: 3.14, pitch: 0.0, yaw: 0.0, cartesian_path: true}"
+
+# Close the gripper
+ros2 topic pub --once /open_gripper example_interfaces/msg/Bool "{data: false}"
+
+# Move sideways in a straight line
+ros2 topic pub -1 /pose_command my_robot_interfaces/msg/PoseCommand "{x: 0.7, y: 0.3, z: 0.2, roll: 3.14, pitch: 0.0, yaw: 0.0, cartesian_path: true}"
+
+# Open the gripper
+ros2 topic pub --once /open_gripper example_interfaces/msg/Bool "{data: true}"
+```
+
+Run only one launch at a time.
 
 ## Packages
 | Package | Contents |
@@ -60,18 +89,12 @@ ros2 run my_robot_commander_cpp commander
 |---|---|---|
 | /open_gripper | example_interfaces/msg/Bool | true = open, false = close |
 | /joint_command | std_msgs/msg/Float64MultiArray | 6 joint values |
-| /pose_command | my_robot_interfaces/msg/PoseCommand | end-effector pose |
-
-Example:
-```bash
-ros2 topic pub -1 /pose_command my_robot_interfaces/msg/PoseCommand \
-"{x: 0.7, y: 0.0, z: 0.2, roll: 3.14, pitch: 0.0, yaw: 0.0, cartesian_path: true}"
-```
+| /pose_command | my_robot_interfaces/msg/PoseCommand | end-effector pose; `cartesian_path: true` moves in a straight line |
 
 ## Notes
 - Simulation only (mock hardware).
 - RViz can look choppy on WSL2 because of software rendering (`LIBGL_ALWAYS_SOFTWARE=1`).
-- Run only one launch at a time. Duplicate robot_state_publisher or ros2_control_node instances make the arm flicker.
+- Duplicate robot_state_publisher or ros2_control_node instances make the arm flicker, so run one launch at a time.
 - Relaunch after any URDF or YAML change.
 
 ## License
