@@ -6,6 +6,7 @@
 ![ros2_control](https://img.shields.io/badge/ros2__control-mock%20hardware-orange)
 ![Platform](https://img.shields.io/badge/Ubuntu-24.04%20%7C%20WSL2-E95420)
 ![License](https://img.shields.io/badge/License-Apache%202.0-green)
+![Build](https://github.com/shreyas02005-sudo/6dof_arm_moveit/actions/workflows/build.yml/badge.svg)
 
 A simulated 6-axis robot arm with a parallel gripper. It uses MoveIt 2 for motion planning and ros2_control for execution, and it's driven by a C++ commander node that accepts simple ROS 2 topic commands. It runs on mock hardware, so you don't need a real robot to try it.
 
