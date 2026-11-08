@@ -47,7 +47,7 @@ There are two clips in the [demo folder](https://drive.google.com/drive/folders/
 ## What it does
 
 - Plans and executes arm motions with **MoveIt 2**, both from RViz and from code
-- Accepts **end-effector pose commands**, either as a freely planned move or as a **straight-line Cartesian path**
+- Accepts **end effector pose commands**, either as a freely planned move or as a **straight line Cartesian path**
 - Accepts **joint-space commands** for all six joints
 - Opens and closes a **parallel gripper** with a single Bool message
 - Runs the full pipeline (planning, trajectory controller, joint states) on **mock hardware**, so it works on any machine with ROS 2 Jazzy
